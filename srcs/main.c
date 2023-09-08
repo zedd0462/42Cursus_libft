@@ -24,6 +24,13 @@
 #include <ctype.h>
 #include <limits.h>
 #include <strings.h>
+#include <time.h>
+#include <stdlib.h>
+
+#define STR_INT_MAX "2147483647"
+#define STR_INT_MIN "-2147483648"
+#define RANDOM_TESTS 1
+#define RANDOM_TESTS_NB 100000
 
 int _ok = 1;
 int * const ok = &_ok;
@@ -38,6 +45,13 @@ int are_overlapping(const char *a, const char *b) {
 
 int memequal(const void *s1, const void *s2, size_t n){
 	return memcmp(s1,s2,n) == 0;
+}
+
+int random_int() {
+    int random_sign = (rand() % 2 == 0) ? 1 : -1;
+    int random_positive = rand();
+
+    return random_positive * random_sign;
 }
 
 int assert_ft_strlen(char *s, int len){
@@ -419,6 +433,47 @@ int assert_ft_atoi(const char *nptr){
 	return 0;
 }
 
+int silent_assert_ft_atoi(const char *nptr){
+	int result = ft_atoi(nptr);
+	int expected = atoi(nptr);
+	if(expected == result){
+		return 1;
+	}
+	fail();
+	return 0;
+}
+
+char *itoa(int n){
+	char *result = malloc(12);
+	sprintf(result,"%d",n);
+	return result;
+}
+
+int random_test_ft_atoi(size_t number_of_test){
+	int r = 1;
+	int d;
+	char *str;
+	srand(time(NULL));
+	printf("-> Testing ft_atoi with %zu random numbers \n",number_of_test);
+	for (size_t i = 0; i < number_of_test; i++){
+		d = random_int();
+		str = itoa(d);
+		r = r && silent_assert_ft_atoi(str);
+		if(!r){
+			printf(RED "--> FAIL on %d\n" RESET,d);
+			free(str);
+			break;
+		}
+		free(str);
+	}
+	if (r){
+		printf(GREEN "-> RANDOM TESTS : OK !\n" RESET);
+	}else{
+		printf(RED "-> RANDOM TEST : FAILED !!! \n" RESET);
+	}
+	return r;
+}
+
 void test_ft_atoi(){
 	int result = 1;
 	printf(BOLDBLUE "Testing ft_atoi...\n" RESET);
@@ -454,6 +509,7 @@ void test_ft_atoi(){
 	result = result && assert_ft_atoi("-1000");
 	result = result && assert_ft_atoi("10003000");
 	result = result && assert_ft_atoi("-10003000");
+	if (RANDOM_TESTS) result = result && random_test_ft_atoi(RANDOM_TESTS_NB);
 	if(result){
 		printf(BOLDGREEN "ft_atoi seems OK !\n" RESET);
 	}else{
@@ -1273,7 +1329,7 @@ void test_ft_split(){
 	int r = 1;
 	char *strs1[] = {"Hello","World!","How","are","you","doing","today?",NULL};
 	r = r && assert_ft_split("Hello World! How are you doing today?",' ',strs1);
-	/*char *strs2[] = {NULL};
+	char *strs2[] = {NULL};
 	r = r && assert_ft_split("",' ',strs2);
 	r = r && assert_ft_split("  ",' ',strs2);
 	r = r && assert_ft_split(" ",' ',strs2);
@@ -1289,12 +1345,123 @@ void test_ft_split(){
 	char *strs5[] = {"Hello",NULL};
 	r = r && assert_ft_split("Hello",' ',strs5);
 	r = r && assert_ft_split(" Hello",' ',strs5);
-	r = r && assert_ft_split("Hello ",' ',strs5);*/
+	r = r && assert_ft_split("Hello ",' ',strs5);
 	if(r)
 		printf(BOLDGREEN "ft_split seems OK !\n" RESET);
 	else
 		printf(BOLDRED "ft_split is not OK !\n" RESET);
 	printf(BOLDBLUE "---------------------\n" RESET);
+}
+
+int assert_ft_itoa(int d, char *expected){
+	char *result = ft_itoa(d);
+	int r = 1;
+	printf("-> Testing ft_itoa(%d) :: ",d);
+	r = r && (strcmp(result,expected) == 0);
+	printf("Expecting \"%s\" got \"%s\" :: ",expected,result);
+	free(result);
+	if(r){
+		printf(GREEN " OK !\n" RESET);
+		return 1;
+	}else{
+		printf(RED " !!!FAIL!!!\n" RESET);
+		fail();
+		return 0;
+	}
+}
+
+int random_test_ft_itoa(size_t number_of_tests){
+	int r = 1;
+	int d;
+	srand(time(NULL));
+	printf("\n-> Testing ft_itoa with %zu random numbers \n",number_of_tests);
+	for (size_t i = 0; i < number_of_tests; i++){
+		d = random_int();
+		char *expected = itoa(d);
+		char *result = ft_itoa(d);
+		r = r && (strcmp(result,expected) == 0);
+		if(!r){
+			printf(RED "Test number %zu FAILED expected \"%s\" got \"%s\" \n" RESET,i,expected,result);
+			free(result);
+			free(expected);
+			fail();
+			break;
+		}
+		free(result);
+		free(expected);
+	}
+	if (r){
+		printf(GREEN "-> RANDOM TESTS : OK !\n" RESET);
+	}else{
+		printf(RED "-> RANDOM TEST : FAILED !!! \n" RESET);
+	}
+	printf("\n");
+	return r;
+}
+
+void test_ft_itoa(){
+	printf(BOLDBLUE "Testing ft_itoa...\n" RESET);
+	printf(BOLDBLUE "---------------------\n" RESET);
+	int r = 1;
+	r = r && assert_ft_itoa(0,"0");
+	r = r && assert_ft_itoa(1,"1");
+	r = r && assert_ft_itoa(-1,"-1");
+	r = r && assert_ft_itoa(2,"2");
+	r = r && assert_ft_itoa(-2,"-2");
+	r = r && assert_ft_itoa(3,"3");
+	r = r && assert_ft_itoa(-3,"-3");
+	r = r && assert_ft_itoa(4,"4");
+	r = r && assert_ft_itoa(-4,"-4");
+	r = r && assert_ft_itoa(5,"5");
+	r = r && assert_ft_itoa(-5,"-5");
+	r = r && assert_ft_itoa(6,"6");
+	r = r && assert_ft_itoa(-6,"-6");
+	r = r && assert_ft_itoa(7,"7");
+	r = r && assert_ft_itoa(-7,"-7");
+	r = r && assert_ft_itoa(8,"8");
+	r = r && assert_ft_itoa(-8,"-8");
+	r = r && assert_ft_itoa(9,"9");
+	r = r && assert_ft_itoa(-9,"-9");
+	r = r && assert_ft_itoa(10,"10");
+	r = r && assert_ft_itoa(-10,"-10");
+	r = r && assert_ft_itoa(100,"100");
+	r = r && assert_ft_itoa(-100,"-100");
+	r = r && assert_ft_itoa(1000,"1000");
+	r = r && assert_ft_itoa(-1000,"-1000");
+	r = r && assert_ft_itoa(10000,"10000");
+	r = r && assert_ft_itoa(-10000,"-10000");
+	r = r && assert_ft_itoa(100000,"100000");
+	r = r && assert_ft_itoa(-100000,"-100000");
+	r = r && assert_ft_itoa(1000000,"1000000");
+	r = r && assert_ft_itoa(-1000000,"-1000000");
+	r = r && assert_ft_itoa(10000000,"10000000");
+	r = r && assert_ft_itoa(-10000000,"-10000000");
+	r = r && assert_ft_itoa(100000000,"100000000");
+	r = r && assert_ft_itoa(-100000000,"-100000000");
+	r = r && assert_ft_itoa(1000000000,"1000000000");
+	r = r && assert_ft_itoa(-1000000000,"-1000000000");
+	r = r && assert_ft_itoa(2100000047,"2100000047");
+	r = r && assert_ft_itoa(-2100000047,"-2100000047");
+	r = r && assert_ft_itoa(123456789,"123456789");
+	r = r && assert_ft_itoa(-123456789,"-123456789");
+	r = r && assert_ft_itoa(INT_MAX,STR_INT_MAX);
+	r = r && assert_ft_itoa(INT_MIN,STR_INT_MIN);
+	if (RANDOM_TESTS) r = r && random_test_ft_itoa(RANDOM_TESTS_NB);
+	if(r)
+		printf(BOLDGREEN "ft_itoa seems OK !\n" RESET);
+	else
+		printf(BOLDRED "ft_itoa is not OK !\n" RESET);
+	printf(BOLDBLUE "---------------------\n" RESET);
+}
+
+void print_rand_ints(size_t number_of_integers){
+	int d;
+	srand(time(NULL));
+	printf("Generating %zu random integers...\n",number_of_integers);
+	for (size_t i = 0; i < number_of_integers; i++){
+		d = random_int();
+		printf("%d\n",d);
+	}
 }
 
 int main()
@@ -1329,8 +1496,8 @@ int main()
 	//test_ft_substr();
 	//test_ft_strjoin();
 	//test_ft_strtrim();
-	test_ft_split();
-	
+	//test_ft_split();
+	test_ft_itoa();
 	
 	printf(BOLDBLUE "---------------------\n" RESET);
 	printf(BOLDBLUE "---------------------\n" RESET);
