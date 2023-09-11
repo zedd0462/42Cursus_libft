@@ -26,6 +26,8 @@
 #include <strings.h>
 #include <time.h>
 #include <stdlib.h>
+#include <unistd.h>
+#include <fcntl.h>
 
 #define STR_INT_MAX "2147483647"
 #define STR_INT_MIN "-2147483648"
@@ -1454,19 +1456,373 @@ void test_ft_itoa(){
 	printf(BOLDBLUE "---------------------\n" RESET);
 }
 
-void print_rand_ints(size_t number_of_integers){
-	int d;
-	srand(time(NULL));
-	printf("Generating %zu random integers...\n",number_of_integers);
-	for (size_t i = 0; i < number_of_integers; i++){
-		d = random_int();
-		printf("%d\n",d);
+char map_to_upper(unsigned int i, char c){
+	(void)(i);
+	return toupper(c);
+}
+char map_to_lower(unsigned int i, char c){
+	(void)(i);
+	return tolower(c);
+}
+char is_even(unsigned int i, char c){
+	(void)(c);
+	return i % 2 == 0 ? 'Y' : 'N';
+}
+char is_odd(unsigned int i, char c){
+	(void)(c);
+	return i % 2 == 1 ? 'Y' : 'N';
+}
+char is_vowel(unsigned int i, char c){
+	(void)(i);
+	return strchr("aeiouyAEIOUY",c) != NULL ? 'Y' : 'N';
+}
+char is_consonant(unsigned int i, char c){
+	(void)(i);
+	return strchr("bcdfghjklmnpqrstvwxzBCDFGHJKLMNPQRSTVWXZ",c) != NULL ? 'Y' : 'N';
+}
+char is_digit(unsigned int i, char c){
+	(void)(i);
+	return strchr("0123456789",c) != NULL ? 'Y' : 'N';
+}
+char ret_char(unsigned int i, char c){
+	(void)(i);
+	return c;
+}
+char ret_index(unsigned int i, char c){
+	(void)(c);
+	return i + '0';
+}
+
+int assert_ft_strmapi(char const *s, char (*f)(unsigned int, char), char *expected){
+	char *result = ft_strmapi(s,f);
+	int r = 1;
+	printf("-> Testing ft_strmapi(\"%s\",f) :: ",s);
+	r = r && (strcmp(result,expected) == 0);
+	printf("Expecting \"%s\" got \"%s\" :: ",expected,result);
+	free(result);
+	if(r){
+		printf(GREEN " OK !\n" RESET);
+		return 1;
+	}else{
+		printf(RED " !!!FAIL!!!\n" RESET);
+		fail();
+		return 0;
 	}
 }
 
+void test_ft_strmapi(){
+	int r = 1;
+	printf(BOLDBLUE "Testing ft_strmapi...\n" RESET);
+	printf(BOLDBLUE "---------------------\n" RESET);
+	r = r && assert_ft_strmapi("Hello",&map_to_upper,"HELLO");
+	r = r && assert_ft_strmapi("Hello",&map_to_lower,"hello");
+	r = r && assert_ft_strmapi("Hello",&is_even,"YNYNY");
+	r = r && assert_ft_strmapi("Hello",&is_odd,"NYNYN");
+	r = r && assert_ft_strmapi("Hello",&is_vowel,"NYNNY");
+	r = r && assert_ft_strmapi("Hello",&is_consonant,"YNYYN");
+	r = r && assert_ft_strmapi("Hello",&is_digit,"NNNNN");
+	r = r && assert_ft_strmapi("Hello123",&is_digit,"NNNNNYYY");
+	r = r && assert_ft_strmapi("",&is_digit,"");
+	r = r && assert_ft_strmapi("Hello World!",&ret_char,"Hello World!");
+	r = r && assert_ft_strmapi("Hello", &ret_index, "01234");
+	if(r)
+		printf(BOLDGREEN "ft_strmapi seems OK !\n" RESET);
+	else
+		printf(BOLDRED "ft_strmapi is not OK !\n" RESET);
+	printf(BOLDBLUE "---------------------\n" RESET);
+}
+
+void _upper(unsigned int i, char *c){
+	(void)(i);
+	*c = toupper(*c);
+}
+void _lower(unsigned int i, char *c){
+	(void)(i);
+	*c = tolower(*c);
+}
+void _even(unsigned int i, char *c){
+	*c = i % 2 == 0 ? 'Y' : 'N';
+}
+void _odd(unsigned int i, char *c){
+	*c = i % 2 == 1 ? 'Y' : 'N';
+}
+void _vowel(unsigned int i, char *c){
+	(void)(i);
+	*c = strchr("aeiouyAEIOUY",*c) != NULL ? 'Y' : 'N';
+}
+void _consonant(unsigned int i, char *c){
+	(void)(i);
+	*c = strchr("bcdfghjklmnpqrstvwxzBCDFGHJKLMNPQRSTVWXZ",*c) != NULL ? 'Y' : 'N';
+}
+void _digit(unsigned int i, char *c){
+	(void)(i);
+	*c = strchr("0123456789",*c) != NULL ? 'Y' : 'N';
+}
+void _nothing(unsigned int i, char *c){
+	(void)(i);
+	(void)(c);
+}
+void _one(unsigned int i, char *c){
+	(void)(i);
+	*c = '1';
+}
+
+int assert_ft_striteri(char *s, void (*f)(unsigned int, char*),char *expected){
+	char *result = strdup(s);
+	ft_striteri(result,f);
+	int r = 1;
+	printf("-> Testing ft_striteri(\"%s\",f) :: ",s);
+	r = r && (strcmp(result,expected) == 0);
+	printf("Expecting \"%s\" got \"%s\" :: ",expected,result);
+	free(result);
+	if(r){
+		printf(GREEN " OK !\n" RESET);
+		return 1;
+	}else{
+		printf(RED " !!!FAIL!!!\n" RESET);
+		fail();
+		return 0;
+	}
+}
+
+void test_ft_striteri(){
+	int r = 1;
+	printf(BOLDBLUE "Testing ft_striteri...\n" RESET);
+	printf(BOLDBLUE "---------------------\n" RESET);
+	r = r && assert_ft_striteri("Hello",&_upper,"HELLO");
+	r = r && assert_ft_striteri("Hello",&_lower,"hello");
+	r = r && assert_ft_striteri("Hello",&_even,"YNYNY");
+	r = r && assert_ft_striteri("Hello",&_odd,"NYNYN");
+	r = r && assert_ft_striteri("Hello",&_vowel,"NYNNY");
+	r = r && assert_ft_striteri("Hello",&_consonant,"YNYYN");
+	r = r && assert_ft_striteri("Hello",&_digit,"NNNNN");
+	r = r && assert_ft_striteri("Hello123",&_digit,"NNNNNYYY");
+	r = r && assert_ft_striteri("",&_digit,"");
+	r = r && assert_ft_striteri("Hello World!",&_nothing,"Hello World!");
+	r = r && assert_ft_striteri("Hello",&_one,"11111");
+	if(r)
+		printf(BOLDGREEN "ft_striteri seems OK !\n" RESET);
+	else
+		printf(BOLDRED "ft_striteri is not OK !\n" RESET);
+	printf(BOLDBLUE "---------------------\n" RESET);
+}
+
+void test_ft_putchar_fd(){
+	printf(BOLDBLUE "Testing ft_putchar_fd\n" RESET);
+	printf(BOLDBLUE "---------------------\n" RESET);
+	int r = 1;
+	int fd = open("./tmp.txt", O_RDWR | O_CREAT | O_TRUNC, 0644);
+	ft_putchar_fd('H',fd);
+	ft_putchar_fd('e',fd);
+	ft_putchar_fd('l',fd);
+	ft_putchar_fd('l',fd);
+	ft_putchar_fd('o',fd);
+	ft_putchar_fd(' ',fd);
+	ft_putchar_fd('W',fd);
+	ft_putchar_fd('o',fd);
+	ft_putchar_fd('r',fd);
+	ft_putchar_fd('l',fd);
+	ft_putchar_fd('d',fd);
+	ft_putchar_fd('!',fd);
+	ft_putchar_fd('\0',fd);
+	close(fd);
+	fd = open("./tmp.txt", O_RDONLY);
+	char *result = (char *)malloc(13);
+	read(fd,result,13);
+	close(fd);
+	printf("-> Testing ft_putchar_fd, writing \"Hello World!\" to ./tmp.txt :: ");
+	r = r && (strcmp(result,"Hello World!") == 0);
+	free(result);
+	remove("./tmp.txt");
+	if(r){
+		printf(GREEN " OK !\n" RESET);
+	}else{
+		printf(RED " !!!FAIL!!!\n" RESET);
+		fail();
+	}
+}
+
+void test_ft_putstr_fd(){
+	printf(BOLDBLUE "Testing ft_putstr_fd\n" RESET);
+	printf(BOLDBLUE "---------------------\n" RESET);
+	int r = 1;
+	int fd = open("./tmp.txt", O_RDWR | O_CREAT | O_TRUNC, 0644);
+	ft_putstr_fd("Hello World!",fd);
+	close(fd);
+	fd = open("./tmp.txt", O_RDONLY);
+	char *result = (char *)malloc(12);
+	read(fd,result,12);
+	close(fd);
+	printf("-> Testing ft_putstr_fd, writing \"Hello World!\" to ./tmp.txt :: ");
+	r = r && (memcmp(result,"Hello World!",12) == 0);
+	free(result);
+	remove("./tmp.txt");
+	if(r){
+		printf(GREEN " OK !\n" RESET);
+	}else{
+		printf(RED " !!!FAIL!!!\n" RESET);
+		fail();
+	}
+	printf(BOLDBLUE "---------------------\n" RESET);
+}
+
+void test_ft_putendl_fd(){
+	printf(BOLDBLUE "Testing ft_putendl_fd\n" RESET);
+	printf(BOLDBLUE "---------------------\n" RESET);
+	int r = 1;
+	int fd = open("./tmp.txt", O_RDWR | O_CREAT | O_TRUNC, 0644);
+	ft_putendl_fd("Hello World!",fd);
+	close(fd);
+	fd = open("./tmp.txt", O_RDONLY);
+	char *result = (char *)malloc(13);
+	read(fd,result,13);
+	close(fd);
+	printf("-> Testing ft_putendl_fd, writing \"Hello World!\" to ./tmp.txt :: ");
+	r = r && (memcmp(result,"Hello World!\n",13) == 0);
+	free(result);
+	remove("./tmp.txt");
+	if(r){
+		printf(GREEN " OK !\n" RESET);
+	}else{
+		printf(RED " !!!FAIL!!!\n" RESET);
+		fail();
+	}
+	printf(BOLDBLUE "---------------------\n" RESET);
+}
+
+int assert_ft_putnbr_fd(int n ,char *expected){
+	int r = 1;
+	int fd = open("./tmp.txt", O_RDWR | O_CREAT | O_TRUNC, 0644);
+	ft_putnbr_fd(n,fd);
+	ft_putchar_fd('\0',fd);
+	close(fd);
+	fd = open("./tmp.txt", O_RDONLY);
+	char *result = (char *)malloc(strlen(expected) + 1);
+	read(fd,result,strlen(expected) + 1);
+	close(fd);
+	printf("-> Testing ft_putnbr_fd(%d), expecting \"%s\" got \"%s\" :: ",n,expected,result);
+	r = r && (memequal(result,expected,strlen(expected) + 1));
+	free(result);
+	remove("./tmp.txt");
+	if(r){
+		printf(GREEN " OK !\n" RESET);
+		return 1;
+	}else{
+		printf(RED " !!!FAIL!!!\n" RESET);
+		fail();
+		return 0;
+	}
+}
+
+int silent_assert_ft_putnbr_fd(int n, char *expected){
+	int r = 1;
+	int fd = open("./tmp.txt", O_RDWR | O_CREAT | O_TRUNC, 0644);
+	ft_putnbr_fd(n,fd);
+	ft_putchar_fd('\0',fd);
+	close(fd);
+	fd = open("./tmp.txt", O_RDONLY);
+	char *result = (char *)malloc(strlen(expected) + 1);
+	read(fd,result,strlen(expected) + 1);
+	close(fd);
+	r = r && (memequal(result,expected,strlen(expected) + 1));
+	free(result);
+	remove("./tmp.txt");
+	if(!r)
+		fail();
+	return r;
+}
+
+
+int random_test_ft_putnbr_fd(size_t number_of_tests){
+	int r = 1;
+	int n;
+	srand(time(NULL));
+	printf("\n-> Testing ft_putnbr_fd with %zu random numbers \n",number_of_tests);
+	for (size_t i = 0; i < number_of_tests; i++){
+		n = random_int();
+		char *expected = itoa(n);
+		r = r && silent_assert_ft_putnbr_fd(n,expected);
+		if(!r){
+			printf(RED "Test number %zu FAILED expected \"%s\" got \"%d\" \n" RESET,i,expected,n);
+			free(expected);
+			fail();
+			break;
+		}
+		free(expected);
+	}
+	if (r){
+		printf(GREEN "-> RANDOM TESTS : OK !\n" RESET);
+	}else{
+		printf(RED "-> RANDOM TEST : FAILED !!! \n" RESET);
+	}
+	printf("\n");
+	return r;
+}
+
+
+void test_ft_putnbr_fd(){
+	int r = 1;
+	printf(BOLDBLUE "Testing ft_putnbr_fd\n" RESET);
+	printf(BOLDBLUE "---------------------\n" RESET);
+	r = r && assert_ft_putnbr_fd(0,"0");
+	r = r && assert_ft_putnbr_fd(1,"1");
+	r = r && assert_ft_putnbr_fd(-1,"-1");
+	r = r && assert_ft_putnbr_fd(2,"2");
+	r = r && assert_ft_putnbr_fd(-2,"-2");
+	r = r && assert_ft_putnbr_fd(3,"3");
+	r = r && assert_ft_putnbr_fd(-3,"-3");
+	r = r && assert_ft_putnbr_fd(4,"4");
+	r = r && assert_ft_putnbr_fd(-4,"-4");
+	r = r && assert_ft_putnbr_fd(5,"5");
+	r = r && assert_ft_putnbr_fd(-5,"-5");
+	r = r && assert_ft_putnbr_fd(6,"6");
+	r = r && assert_ft_putnbr_fd(-6,"-6");
+	r = r && assert_ft_putnbr_fd(7,"7");
+	r = r && assert_ft_putnbr_fd(-7,"-7");
+	r = r && assert_ft_putnbr_fd(8,"8");
+	r = r && assert_ft_putnbr_fd(-8,"-8");
+	r = r && assert_ft_putnbr_fd(9,"9");
+	r = r && assert_ft_putnbr_fd(-9,"-9");
+	r = r && assert_ft_putnbr_fd(10,"10");
+	r = r && assert_ft_putnbr_fd(-10,"-10");
+	r = r && assert_ft_putnbr_fd(100,"100");
+	r = r && assert_ft_putnbr_fd(-100,"-100");
+	r = r && assert_ft_putnbr_fd(1000,"1000");
+	r = r && assert_ft_putnbr_fd(-1000,"-1000");
+	r = r && assert_ft_putnbr_fd(10000,"10000");
+	r = r && assert_ft_putnbr_fd(-10000,"-10000");
+	r = r && assert_ft_putnbr_fd(100000,"100000");
+	r = r && assert_ft_putnbr_fd(-100000,"-100000");
+	r = r && assert_ft_putnbr_fd(1000000,"1000000");
+	r = r && assert_ft_putnbr_fd(-1000000,"-1000000");
+	r = r && assert_ft_putnbr_fd(10000000,"10000000");
+	r = r && assert_ft_putnbr_fd(-10000000,"-10000000");
+	r = r && assert_ft_putnbr_fd(100000000,"100000000");
+	r = r && assert_ft_putnbr_fd(-100000000,"-100000000");
+	r = r && assert_ft_putnbr_fd(1000000000,"1000000000");
+	r = r && assert_ft_putnbr_fd(-1000000000,"-1000000000");
+	r = r && assert_ft_putnbr_fd(2100000047,"2100000047");
+	r = r && assert_ft_putnbr_fd(-2100000047,"-2100000047");
+	r = r && assert_ft_putnbr_fd(123456789,"123456789");
+	r = r && assert_ft_putnbr_fd(-123456789,"-123456789");
+	r = r && assert_ft_putnbr_fd(INT_MAX,STR_INT_MAX);
+	r = r && assert_ft_putnbr_fd(INT_MIN,STR_INT_MIN);
+	if (RANDOM_TESTS) r = r && random_test_ft_putnbr_fd(RANDOM_TESTS_NB);
+	if(r)
+		printf(BOLDGREEN "ft_putnbr_fd seems OK !\n" RESET);
+	else
+		printf(BOLDRED "ft_putnbr_fd is not OK !\n" RESET);
+	printf(BOLDBLUE "---------------------\n" RESET);
+}
+
+
+
+	
+
 int main()
 {
-/*	//PART1
+/*
+	//PART1
  	test_ft_isalpha();
 	test_ft_isdigit();
 	test_ft_isalnum();
@@ -1489,17 +1845,26 @@ int main()
 	test_ft_strnstr();
 	test_ft_atoi();
 	test_ft_calloc();
-	test_ft_strdup(); */
+	test_ft_strdup();
+*/
 
 
+/*
 	//PART2
-	//test_ft_substr();
-	//test_ft_strjoin();
-	//test_ft_strtrim();
-	//test_ft_split();
+	test_ft_substr();
+	test_ft_strjoin();
+	test_ft_strtrim();
+	test_ft_split();
 	test_ft_itoa();
+	test_ft_strmapi();
+	test_ft_striteri();
+	test_ft_putchar_fd();
+	test_ft_putstr_fd();
+	test_ft_putendl_fd();
+	test_ft_putnbr_fd();
+*/
 	
-	printf(BOLDBLUE "---------------------\n" RESET);
+	printf(BOLDBLUE "\n\n---------------------\n" RESET);
 	printf(BOLDBLUE "---------------------\n" RESET);
 	if(_ok){
 		printf(BOLDGREEN "All tests passed !\n" RESET);
