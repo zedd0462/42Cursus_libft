@@ -1113,7 +1113,7 @@ void test_ft_strnstr(){
 
 int assert_ft_strlcat(char *dst, const char *src, size_t size){
 	int r = 1;
-	char *dst2 = memcpy(malloc(size),dst,size == 0 ? 1 : size);
+	char *dst2 = memcpy(malloc(size?size:1),dst,size == 0 ? 1 : size);
 	printf("-> Testing ft_strlcat(\"%s\",\"%s\",%zu) :: ",dst,src,size);
 	size_t ret_result = ft_strlcat(dst,src,size);
 	size_t ret_expected = strlcat(dst2,src,size);
@@ -1821,7 +1821,7 @@ void test_ft_putnbr_fd(){
 
 int main()
 {
-/*
+/**/
 	//PART1
  	test_ft_isalpha();
 	test_ft_isdigit();
@@ -1846,10 +1846,10 @@ int main()
 	test_ft_atoi();
 	test_ft_calloc();
 	test_ft_strdup();
-*/
 
 
-/*
+
+/**/
 	//PART2
 	test_ft_substr();
 	test_ft_strjoin();
@@ -1862,7 +1862,7 @@ int main()
 	test_ft_putstr_fd();
 	test_ft_putendl_fd();
 	test_ft_putnbr_fd();
-*/
+
 	
 	printf(BOLDBLUE "\n\n---------------------\n" RESET);
 	printf(BOLDBLUE "---------------------\n" RESET);
