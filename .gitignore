@@ -53,3 +53,9 @@ dkms.conf
 
 # vscode settings folder
 .vscode/
+
+
+# Ignore vim files:
+*~
+*.swp
+*.swo
