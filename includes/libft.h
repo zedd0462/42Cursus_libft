@@ -6,7 +6,7 @@
 /*   By: afadel <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/24 19:15:43 by afadel            #+#    #+#             */
-/*   Updated: 2023/09/23 16:26:46 by afadel           ###   ########.fr       */
+/*   Updated: 2023/09/23 19:44:01 by afadel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,5 +58,7 @@ typedef struct s_list
 
 t_list	*ft_lstnew(void *content);
 void	ft_lstadd_front(t_list **lst, t_list *new);
+int		ft_lstsize(t_list *lst);
+t_list	*ft_lstlast(t_list *lst);
 
 #endif
