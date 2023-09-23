@@ -1,4 +1,3 @@
-
 #include "libft.h"
 
 #define RESET   "\033[0m"
@@ -700,26 +699,28 @@ void test_ft_memcpy(){
 	bzero((void *)buffer,20);
 	bzero((void *)buffer2,20);
 	int result_bool = 1;
-	void *result = ft_memcpy(buffer,src,20);
-	void *expected = memcpy(buffer2,src,20);
+	void *result;
+	ft_memcpy(buffer,src,20);
+	void *expected;
+	memcpy(buffer2,src,20);
 	result_bool = result_bool && memequal(buffer,buffer2,20);
 	printf("-> Test 1 : %s\n", result_bool ? GREEN "OK" RESET : RED "FAIL" RESET);
 	if(!result_bool) {fail();return;}
 	src = "Hello World";
-	result = ft_memcpy(buffer,src,0);
-	expected = memcpy(buffer2,src,0);
+	ft_memcpy(buffer,src,0);
+	memcpy(buffer2,src,0);
 	result_bool = result_bool && memequal(buffer,buffer2,20);
 	printf("-> Test 2 : %s\n", result_bool ? GREEN "OK" RESET : RED "FAIL" RESET);
 	if(!result_bool) {fail();return;}
 	src = "The good old rabbit";
-	result = ft_memcpy(buffer,src,3);
-	expected = memcpy(buffer2,src,3);
+	ft_memcpy(buffer,src,3);
+	memcpy(buffer2,src,3);
 	result_bool = result_bool && memequal(buffer,buffer2,20);
 	printf("-> Test 3 : %s\n", result_bool ? GREEN "OK" RESET : RED "FAIL" RESET);
 	if(!result_bool) {fail();return;}
 	src = "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
-	result = ft_memcpy(buffer,src,15);
-	expected = memcpy(buffer2,src,15);
+	ft_memcpy(buffer,src,15);
+	memcpy(buffer2,src,15);
 	result_bool = result_bool && memequal(buffer,buffer2,20);
 	printf("-> Test 4 : %s\n", result_bool ? GREEN "OK" RESET : RED "FAIL" RESET);
 	if(!result_bool) {fail();return;}
@@ -1817,52 +1818,108 @@ void test_ft_putnbr_fd(){
 
 
 
-	
+void test_ft_lstnew(){
+	printf(BOLDBLUE "Testing ft_lstnew...\n" RESET);
+	printf(BOLDBLUE "---------------------\n" RESET);
+	int r = 1;
+	t_list *list = ft_lstnew((void *)"Hello World!");
+	printf("-> Testing ft_lstnew((void *)\"Hello World!\") :: ");
+	r = r && (strcmp((char *)list->content,"Hello World!") == 0);
+	r = r && (list->next == NULL);
+	printf("Expecting \"Hello World!\" got \"%s\" :: ",(char *)list->content);
+	free(list);
+	if(r){
+		printf(GREEN " OK !\n" RESET);
+	}else{
+		printf(RED " !!!FAIL!!!\n" RESET);
+		fail();
+	}
+	int nb = 3;
+	t_list *list2 = ft_lstnew((void *)&nb);
+	printf("-> Testing ft_lstnew((void *)&nb) :: (nb is equal to 3)");
+	r = r && (memcmp(list2->content,&nb,sizeof(int)) == 0);
+	r = r && (list2->next == NULL);
+	printf("Expecting \"3\" got \"%d\" :: ",*(int *)list2->content);
+	free(list2);
+	if(r){
+		printf(GREEN " OK !\n" RESET);
+	}else{
+		printf(RED " !!!FAIL!!!\n" RESET);
+		fail();
+	}
+	printf(BOLDBLUE "---------------------\n" RESET);
+	if(r){
+		printf(BOLDGREEN "ft_lstnew seems OK !\n" RESET);
+	}else{
+		printf(BOLDRED "ft_lstnew is not OK !\n" RESET);
+	}
+	printf(BOLDBLUE "---------------------\n" RESET);
+}
+
+
+#define TEST_PART_1 0
+#define TEST_PART_2 0
+#define TEST_BONUS 1
 
 int main()
 {
-/**/
-	//PART1
- 	test_ft_isalpha();
-	test_ft_isdigit();
-	test_ft_isalnum();
-	test_ft_isascii();
-	test_ft_isprint();
-	test_ft_strlen();
-	test_ft_memset();
-	test_ft_bzero();
-	test_ft_memcpy();
-	test_ft_memmove();
-	test_ft_strlcpy();
-	test_ft_strlcat();
-	test_ft_toupper();
-	test_ft_tolower();
-	test_ft_strchr();
-	test_ft_strrchr();
-	test_ft_strncmp();
-	test_ft_memchr();
-	test_ft_memcmp();
-	test_ft_strnstr();
-	test_ft_atoi();
-	test_ft_calloc();
-	test_ft_strdup();
+	int test_part_1 = TEST_PART_1;
+	int test_part_2 = TEST_PART_2;
+	int test_bonus = TEST_BONUS;
+	printf(BOLDBLUE "---------------------\n" RESET);
+	printf(BOLDBLUE "Starting tests...\n" RESET);
+	printf(BOLDBLUE "---------------------\n" RESET);
+	printf(MAGENTA "Testing PART 1 ? %s\n" RESET, test_part_1 ? "YES" : "NO");
+	printf(MAGENTA "Testing PART 2 ? %s\n" RESET, test_part_2 ? "YES" : "NO");
+	printf(MAGENTA "Testing BONUS ? %s\n" RESET, test_bonus ? "YES" : "NO");
+	printf(BOLDBLUE "---------------------\n\n" RESET);
+	if(TEST_PART_1){
+		//PART1
+		test_ft_isalpha();
+		test_ft_isdigit();
+		test_ft_isalnum();
+		test_ft_isascii();
+		test_ft_isprint();
+		test_ft_strlen();
+		test_ft_memset();
+		test_ft_bzero();
+		test_ft_memcpy();
+		test_ft_memmove();
+		test_ft_strlcpy();
+		test_ft_strlcat();
+		test_ft_toupper();
+		test_ft_tolower();
+		test_ft_strchr();
+		test_ft_strrchr();
+		test_ft_strncmp();
+		test_ft_memchr();
+		test_ft_memcmp();
+		test_ft_strnstr();
+		test_ft_atoi();
+		test_ft_calloc();
+		test_ft_strdup();
+	}
 
 
+	if(TEST_PART_2){
+		//PART2
+		test_ft_substr();
+		test_ft_strjoin();
+		test_ft_strtrim();
+		test_ft_split();
+		test_ft_itoa();
+		test_ft_strmapi();
+		test_ft_striteri();
+		test_ft_putchar_fd();
+		test_ft_putstr_fd();
+		test_ft_putendl_fd();
+		test_ft_putnbr_fd();
+	}
 
-/**/
-	//PART2
-	test_ft_substr();
-	test_ft_strjoin();
-	test_ft_strtrim();
-	test_ft_split();
-	test_ft_itoa();
-	test_ft_strmapi();
-	test_ft_striteri();
-	test_ft_putchar_fd();
-	test_ft_putstr_fd();
-	test_ft_putendl_fd();
-	test_ft_putnbr_fd();
-
+	if(TEST_BONUS){
+		//BONUS
+		test_ft_lstnew();
+	}
 	
 	printf(BOLDBLUE "\n\n---------------------\n" RESET);
 	printf(BOLDBLUE "---------------------\n" RESET);
