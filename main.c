@@ -42,7 +42,7 @@ void handler(int nSignum, siginfo_t* si, void* vcontext) {
 	(void)nSignum;
 	(void)vcontext;
 	(void)si;
-	write(1,"\n\n\033[1m\033[31m SEGMENTATION FAULT !!!\n\n\033[0m", 40);
+	write(1,"\n\n\033[1m\033[31mSEGMENTATION FAULT !!!\nOne of the libft functions caused a segmentation fault, the tests can't continue.\n\n\033[0m", 121);
 	abort();
 }
 
@@ -1936,6 +1936,157 @@ void test_ft_lstadd_front(){
 
 }
 
+void test_ft_lstsize(){
+	printf(BOLDBLUE "Testing ft_lstsize...\n" RESET);
+	printf(BOLDBLUE "---------------------\n" RESET);
+	t_list *list = ft_lstnew((void *)"Hello World!");
+	t_list *iterator = list;
+	iterator->next = ft_lstnew((void *)"How are you doing today ?");
+	iterator = iterator->next;
+	iterator->next = ft_lstnew((void *)"I'm fine thanks !");
+	iterator = iterator->next;
+	iterator->next = NULL;
+	int r = 1;
+	printf("-> Testing ft_lstsize() on a list of 3 elements :: ");
+	r = r && (ft_lstsize(list) == 3);
+	//free allocated memory
+	iterator = list;
+	list = list->next;
+	free(iterator);
+	iterator = list;
+	list = list->next;
+	free(iterator);
+	iterator = list;
+	list = list->next;
+	free(iterator);
+	free(list);
+	if(r){
+		printf(GREEN " OK !\n" RESET);
+	}else{
+		printf(RED " !!!FAIL!!!\n" RESET);
+		fail();
+	}
+	t_list *list2 = NULL;
+	printf("-> Testing ft_lstsize() on a NULL list :: ");
+	r = r && (ft_lstsize(list2) == 0);
+	if(r){
+		printf(GREEN " OK !\n" RESET);
+	}else{
+		printf(RED " !!!FAIL!!!\n" RESET);
+		fail();
+	}
+	t_list *list3 = ft_lstnew((void *)"Hello World!");
+	printf("-> Testing ft_lstsize() on a list of 1 element :: ");
+	r = r && (ft_lstsize(list3) == 1);
+	//free allocated memory
+	free(list3);
+	if(r){
+		printf(GREEN " OK !\n" RESET);
+	}else{
+		printf(RED " !!!FAIL!!!\n" RESET);
+		fail();
+	}
+	t_list *list4 = ft_lstnew((void *)"Hello World!");
+	list4->next = ft_lstnew((void *)"How are you doing today ?");
+	printf("-> Testing ft_lstsize() on a list of 2 elements :: ");
+	r = r && (ft_lstsize(list4) == 2);
+	//free allocated memory
+	iterator = list4;
+	list4 = list4->next;
+	free(iterator);
+	free(list4);
+	if(r){
+		printf(GREEN " OK !\n" RESET);
+	}else{
+		printf(RED " !!!FAIL!!!\n" RESET);
+		fail();
+	}
+	printf(BOLDBLUE "---------------------\n" RESET);
+	if(r){
+		printf(BOLDGREEN "ft_lstsize seems OK !\n" RESET);
+	}else{
+		printf(BOLDRED "ft_lstsize is not OK !\n" RESET);
+	}
+	printf(BOLDBLUE "---------------------\n" RESET);
+}
+
+void test_ft_lstlast(){
+	printf(BOLDBLUE "Testing ft_lstlast...\n" RESET);
+	printf(BOLDBLUE "---------------------\n" RESET);
+	t_list *list = ft_lstnew((void *)"Hello World!");
+	t_list *iterator = list;
+	iterator->next = ft_lstnew((void *)"How are you doing today ?");
+	iterator = iterator->next;
+	iterator->next = ft_lstnew((void *)"I'm fine thanks !");
+	iterator = iterator->next;
+	iterator->next = ft_lstnew((void *)"This should be last");
+	iterator = iterator->next;
+	iterator->next = NULL;
+	int r = 1;
+	printf("-> Testing ft_lstlast() on a list of 4 elements :: ");
+	r = r && (strcmp((char *)ft_lstlast(list)->content,"This should be last") == 0);
+	r = r && (ft_lstlast(list) == iterator);
+	//free allocated memory
+	iterator = list;
+	list = list->next;
+	free(iterator);
+	iterator = list;
+	list = list->next;
+	free(iterator);
+	iterator = list;
+	list = list->next;
+	free(iterator);
+	iterator = list;
+	list = list->next;
+	free(iterator);
+	free(list);
+	if(r){
+		printf(GREEN " OK !\n" RESET);
+	}else{
+		printf(RED " !!!FAIL!!!\n" RESET);
+	}
+	t_list *list2 = NULL;
+	printf("-> Testing ft_lstlast() on a NULL list :: ");
+	r = r && (ft_lstlast(list2) == NULL);
+	if(r){
+		printf(GREEN " OK !\n" RESET);
+	}else{
+		printf(RED " !!!FAIL!!!\n" RESET);
+	}
+	t_list *list3 = ft_lstnew((void *)"Hello World!");
+	printf("-> Testing ft_lstlast() on a list of 1 element :: ");
+	r = r && (strcmp((char *)ft_lstlast(list3)->content,"Hello World!") == 0);
+	r = r && (ft_lstlast(list3) == list3);
+	//free allocated memory
+	free(list3);
+	if(r){
+		printf(GREEN " OK !\n" RESET);
+	}else{
+		printf(RED " !!!FAIL!!!\n" RESET);
+	}
+	t_list *list4 = ft_lstnew((void *)"Hello World!");
+	list4->next = ft_lstnew((void *)"How are you doing today ?");
+	printf("-> Testing ft_lstlast() on a list of 2 elements :: ");
+	r = r && (strcmp((char *)ft_lstlast(list4)->content,"How are you doing today ?") == 0);
+	r = r && (ft_lstlast(list4) != list4);
+	//free allocated memory
+	iterator = list4;
+	list4 = list4->next;
+	free(iterator);
+	free(list4);
+	if(r){
+		printf(GREEN " OK !\n" RESET);
+	}else{
+		printf(RED " !!!FAIL!!!\n" RESET);
+	}
+	printf(BOLDBLUE "---------------------\n" RESET);
+	if(r){
+		printf(BOLDGREEN "ft_lstlast seems OK !\n" RESET);
+	}else{
+		printf(BOLDRED "ft_lstlast is not OK !\n" RESET);
+	}
+	printf(BOLDBLUE "---------------------\n" RESET);
+}
 
 #define TEST_PART_1 0
 #define TEST_PART_2 0
@@ -2005,6 +2156,8 @@ int main()
 		//BONUS
 		test_ft_lstnew();
 		test_ft_lstadd_front();
+		test_ft_lstsize();
+		test_ft_lstlast();
 	}
 	
 	printf(BOLDBLUE "\n\n---------------------\n" RESET);
