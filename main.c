@@ -27,6 +27,8 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <signal.h>
+
 
 #define STR_INT_MAX "2147483647"
 #define STR_INT_MIN "-2147483648"
@@ -35,6 +37,14 @@
 
 int _ok = 1;
 int * const ok = &_ok;
+
+void handler(int nSignum, siginfo_t* si, void* vcontext) {
+	(void)nSignum;
+	(void)vcontext;
+	(void)si;
+	write(1,"\n\n\033[1m\033[31m SEGMENTATION FAULT !!!\n\n\033[0m", 40);
+	abort();
+}
 
 void fail(){
 	*ok = 0;
@@ -1857,12 +1867,87 @@ void test_ft_lstnew(){
 }
 
 
+void test_ft_lstadd_front(){
+	printf(BOLDBLUE "Testing ft_lstadd_front...\n" RESET);
+	printf(BOLDBLUE "---------------------\n" RESET);
+	int r = 1;
+	t_list *list = ft_lstnew((void *)"Hello World!");
+	t_list *iterator = list;
+	iterator->next = ft_lstnew((void *)"How are you doing today ?");
+	iterator = iterator->next;
+	iterator->next = ft_lstnew((void *)"I'm fine thanks !");
+	iterator = iterator->next;
+	iterator->next = NULL;
+	printf("-> Testing ft_lstadd_front() adding a node in front of a list :: ");
+	ft_lstadd_front(&list,ft_lstnew((void *)"This should be first"));
+	iterator = list;
+	r = r && (strcmp((char *)iterator->content,"This should be first") == 0);
+	iterator = iterator->next;
+	r = r && (strcmp((char *)iterator->content,"Hello World!") == 0);
+	iterator = iterator->next;
+	r = r && (strcmp((char *)iterator->content,"How are you doing today ?") == 0);
+	iterator = iterator->next;
+	r = r && (strcmp((char *)iterator->content,"I'm fine thanks !") == 0);
+	iterator = iterator->next;
+	r = r && (iterator == NULL);
+	//free allocated memory
+	iterator = list;
+	list = list->next;
+	free(iterator);
+	iterator = list;
+	list = list->next;
+	free(iterator);
+	iterator = list;
+	list = list->next;
+	free(iterator);
+	iterator = list;
+	list = list->next;
+	free(iterator);
+	free(list);
+	t_list *list2 = NULL;
+	if(r){
+		printf(GREEN " OK !\n" RESET);
+	}else{
+		printf(RED " !!!FAIL!!!\n" RESET);
+		fail();
+	}
+	printf("-> Testing ft_lstadd_front() adding a node in front of a NULL list :: ");
+	ft_lstadd_front(&list2,ft_lstnew((void *)"This should be first"));
+	r = r && (strcmp((char *)list2->content,"This should be first") == 0);
+	r = r && (list2->next == NULL);
+	//free allocated memory
+	free(list2);
+	if(r){
+		printf(GREEN " OK !\n" RESET);
+	}else{
+		printf(RED " !!!FAIL!!!\n" RESET);
+		fail();
+	}
+	printf(BOLDBLUE "---------------------\n" RESET);
+	if(r){
+		printf(BOLDGREEN "ft_lstadd_front seems OK !\n" RESET);
+	}else{
+		printf(BOLDRED "ft_lstadd_front is not OK !\n" RESET);
+	}
+	printf(BOLDBLUE "---------------------\n" RESET);
+	
+	
+	
+
+}
+
+
 #define TEST_PART_1 0
 #define TEST_PART_2 0
 #define TEST_BONUS 1
 
 int main()
 {
+	struct sigaction action;
+	memset(&action, 0, sizeof(struct sigaction));
+	action.sa_flags = SA_SIGINFO;
+	action.sa_sigaction = handler;
+	sigaction(SIGSEGV, &action, NULL);
 	int test_part_1 = TEST_PART_1;
 	int test_part_2 = TEST_PART_2;
 	int test_bonus = TEST_BONUS;
@@ -1919,6 +2004,7 @@ int main()
 	if(TEST_BONUS){
 		//BONUS
 		test_ft_lstnew();
+		test_ft_lstadd_front();
 	}
 	
 	printf(BOLDBLUE "\n\n---------------------\n" RESET);
