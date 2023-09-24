@@ -2088,6 +2088,71 @@ void test_ft_lstlast(){
 	printf(BOLDBLUE "---------------------\n" RESET);
 }
 
+void test_lstadd_back(){
+	printf(BOLDBLUE "Testing lstadd_back...\n" RESET);
+	printf(BOLDBLUE "---------------------\n" RESET);
+	int r = 1;
+	printf("-> Testing ft_lstadd_back() adding a node in back of a list :: ");
+	t_list *list1 = ft_lstnew((void *)"Hello world");
+	t_list *iterator = list1;
+	iterator->next = ft_lstnew((void *)"This is second");
+	iterator = iterator->next;
+	iterator->next = ft_lstnew((void *)"This is third");
+	iterator = iterator->next;
+	ft_lstadd_back(&list1, ft_lstnew((void *)"This should be last"));
+	iterator = iterator->next;
+	r = r && (strcmp((char *)iterator->content,"This should be last") == 0);
+	//free allocated memory
+	iterator = list1;
+	list1 = list1->next;
+	free(iterator);
+	iterator = list1;
+	list1 = list1->next;
+	free(iterator);
+	iterator = list1;
+	list1 = list1->next;
+	free(iterator);
+	free(list1);
+	if(r){
+		printf(GREEN " OK !\n" RESET);
+	}else{
+		printf(RED " !!!FAIL!!!\n" RESET);
+	}
+	printf("-> Testing ft_lstadd_back() adding a node in back of a NULL list :: ");
+	t_list *list2 = NULL;
+	ft_lstadd_back(&list2, ft_lstnew((void *)"This should be last"));
+	r = r && (strcmp((char *)list2->content,"This should be last") == 0);
+	//free allocated memory
+	free(list2);
+	if(r){
+		printf(GREEN " OK !\n" RESET);
+	}else{
+		printf(RED " !!!FAIL!!!\n" RESET);
+	}
+	printf("-> Testing ft_lstadd_back() adding a node in back of a list of 1 element :: ");
+	t_list *list3 = ft_lstnew((void *)"Hello world");
+	ft_lstadd_back(&list3, ft_lstnew((void *)"This should be last"));
+	r = r && (strcmp((char *)list3->content,"Hello world") == 0);
+	r = r && (strcmp((char *)list3->next->content,"This should be last") == 0);
+	//free allocated memory
+	iterator = list3;
+	list3 = list3->next;
+	free(iterator);
+	free(list3);
+	if(r){
+		printf(GREEN " OK !\n" RESET);
+	}else{
+		printf(RED " !!!FAIL!!!\n" RESET);
+	}
+	printf(BOLDBLUE "---------------------\n" RESET);
+	if(r){
+		printf(BOLDGREEN "ft_lstadd_back seems OK !\n" RESET);
+	}else{
+		printf(BOLDRED "ft_lstadd_back is not OK !\n" RESET);
+	}
+	printf(BOLDBLUE "---------------------\n" RESET);
+}
+
 #define TEST_PART_1 0
 #define TEST_PART_2 0
 #define TEST_BONUS 1
@@ -2109,6 +2174,7 @@ int main()
 	printf(MAGENTA "Testing PART 2 ? %s\n" RESET, test_part_2 ? "YES" : "NO");
 	printf(MAGENTA "Testing BONUS ? %s\n" RESET, test_bonus ? "YES" : "NO");
 	printf(BOLDBLUE "---------------------\n\n" RESET);
+
 	if(TEST_PART_1){
 		//PART1
 		test_ft_isalpha();
@@ -2158,6 +2224,7 @@ int main()
 		test_ft_lstadd_front();
 		test_ft_lstsize();
 		test_ft_lstlast();
+		test_lstadd_back();
 	}
 	
 	printf(BOLDBLUE "\n\n---------------------\n" RESET);
