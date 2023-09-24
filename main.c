@@ -38,6 +38,9 @@
 int _ok = 1;
 int * const ok = &_ok;
 
+int changed = 0;
+int * const _changed = &changed;
+
 void handler(int nSignum, siginfo_t* si, void* vcontext) {
 	(void)nSignum;
 	(void)vcontext;
@@ -2153,6 +2156,30 @@ void test_lstadd_back(){
 	printf(BOLDBLUE "---------------------\n" RESET);
 }
 
+void del(void *content){
+	(void)content;
+	*_changed = 1;
+}
+
+//can't check if the memory is freed, but we can check if the function is called
+void test_ft_lstdelone(){
+	*_changed = 0;
+	printf(BOLDBLUE "Testing ft_lstdelone...\n" RESET);
+	printf(BOLDBLUE "---------------------\n" RESET);
+	printf("This test can't check if the memory is freed, but we can check if the function is called\n");
+	printf("You can use valgrind to check if the memory is freed\n"); 
+	printf("-> Testing ft_lstdelone() on a new node :: ");
+	t_list *list = ft_lstnew((void *)"Hello World!");
+	ft_lstdelone(list,del);
+	if(*_changed){
+		printf(GREEN " OK ! " BOLDRED "FREEING MEMORY NOT TESTED !" "\n" RESET);
+	}else{
+		printf(RED " !!!FAIL!!!\n" RESET);
+		fail();
+	}
+	printf(BOLDBLUE "---------------------\n" RESET);
+}
+
 #define TEST_PART_1 0
 #define TEST_PART_2 0
 #define TEST_BONUS 1
@@ -2225,6 +2252,7 @@ int main()
 		test_ft_lstsize();
 		test_ft_lstlast();
 		test_lstadd_back();
+		test_ft_lstdelone();
 	}
 	
 	printf(BOLDBLUE "\n\n---------------------\n" RESET);
