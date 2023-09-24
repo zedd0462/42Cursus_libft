@@ -41,6 +41,9 @@ int * const ok = &_ok;
 int changed = 0;
 int * const _changed = &changed;
 
+int count = 0;
+int * const _count = &count;
+
 void handler(int nSignum, siginfo_t* si, void* vcontext) {
 	(void)nSignum;
 	(void)vcontext;
@@ -2172,7 +2175,63 @@ void test_ft_lstdelone(){
 	t_list *list = ft_lstnew((void *)"Hello World!");
 	ft_lstdelone(list,del);
 	if(*_changed){
-		printf(GREEN " OK ! " BOLDRED "FREEING MEMORY NOT TESTED !" "\n" RESET);
+		printf(GREEN " OK ! " BOLDMAGENTA "FREEING MEMORY NOT TESTED !" "\n" RESET);
+	}else{
+		printf(RED " !!!FAIL!!!\n" RESET);
+		fail();
+	}
+	printf(BOLDBLUE "---------------------\n" RESET);
+}
+
+void del_count(void *content){
+	(void)content;
+	*_count = *_count + 1;
+}
+
+//can't check if the memory is freed, but we can check if the function is called and how many times and if the list is NULL
+void test_ft_lstclear(){
+	int r = 1;
+	*_count = 0;
+	printf(BOLDBLUE "Testing ft_lstclear...\n" RESET);
+	printf(BOLDBLUE "---------------------\n" RESET);
+	printf("This test can't check if the memory is freed, but we can check if the function is called and how many times and if the list is NULL\n");
+	printf("You can use valgrind to check if the memory is freed\n");
+	printf("-> Testing ft_lstclear() on a list of 3 elements :: ");
+	t_list *list = ft_lstnew((void *)"Hello World!");
+	t_list *iterator = list;
+	iterator->next = ft_lstnew((void *)"How are you doing today ?");
+	iterator = iterator->next;
+	iterator->next = ft_lstnew((void *)"I'm fine thanks !");
+	iterator = iterator->next;
+	iterator->next = NULL;
+	ft_lstclear(&list,del_count);
+	r = r && (*_count == 3);
+	r = r && (list == NULL);
+	if(r){
+		printf(GREEN " OK ! " BOLDMAGENTA "FREEING MEMORY NOT TESTED !" "\n" RESET);
+	}else{
+		printf(RED " !!!FAIL!!!\n" RESET);
+		fail();
+	}
+	printf("-> Testing ft_lstclear() on a NULL list :: ");
+	*_count = 0;
+	ft_lstclear(&list,del_count);
+	r = r && (*_count == 0);
+	r = r && (list == NULL);
+	if(r){
+		printf(GREEN " OK ! " BOLDMAGENTA "FREEING MEMORY NOT TESTED !" "\n" RESET);
+	}else{
+		printf(RED " !!!FAIL!!!\n" RESET);
+		fail();
+	}
+	printf("testing ft_lstclear() on a list of 1 element :: ");
+	*_count = 0;
+	list = ft_lstnew((void *)"Hello World!");
+	ft_lstclear(&list,del_count);
+	r = r && (*_count == 1);
+	r = r && (list == NULL);	
+	if(r){
+		printf(GREEN " OK ! " BOLDMAGENTA "FREEING MEMORY NOT TESTED !" "\n" RESET);
 	}else{
 		printf(RED " !!!FAIL!!!\n" RESET);
 		fail();
@@ -2253,6 +2312,7 @@ int main()
 		test_ft_lstlast();
 		test_lstadd_back();
 		test_ft_lstdelone();
+		test_ft_lstclear();
 	}
 	
 	printf(BOLDBLUE "\n\n---------------------\n" RESET);
@@ -2264,5 +2324,7 @@ int main()
 	}
 	printf(BOLDBLUE "---------------------\n" RESET);
 	printf(BOLDBLUE "---------------------\n" RESET);
+
+	return EXIT_SUCCESS;
 
 }
