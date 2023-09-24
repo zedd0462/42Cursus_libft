@@ -44,6 +44,8 @@ int * const _changed = &changed;
 int count = 0;
 int * const _count = &count;
 
+char buff[128] = "";
+
 void handler(int nSignum, siginfo_t* si, void* vcontext) {
 	(void)nSignum;
 	(void)vcontext;
@@ -2181,6 +2183,12 @@ void test_ft_lstdelone(){
 		fail();
 	}
 	printf(BOLDBLUE "---------------------\n" RESET);
+	if(*_changed){
+		printf(BOLDGREEN "ft_lstdelone seems OK !\n" RESET);
+	}else{
+		printf(BOLDRED "ft_lstdelone is not OK !\n" RESET);
+	}
+	printf(BOLDBLUE "---------------------\n" RESET);
 }
 
 void del_count(void *content){
@@ -2237,7 +2245,92 @@ void test_ft_lstclear(){
 		fail();
 	}
 	printf(BOLDBLUE "---------------------\n" RESET);
+	if(r){
+		printf(BOLDGREEN "ft_lstclear seems OK !\n" RESET);
+	}else{
+		printf(BOLDRED "ft_lstclear is not OK !\n" RESET);
+	}
+	printf(BOLDBLUE "---------------------\n" RESET);
 }
+
+void func(void *content){
+	*_count = *_count + 1;
+	strlcat(buff,(char *)content,128);
+}
+
+	void test_ft_lstiter(){
+	int r = 1;
+	*_count = 0;
+	printf(BOLDBLUE "Testing ft_lstiter...\n" RESET);
+	printf(BOLDBLUE "---------------------\n" RESET);
+	printf("Testing ft_lstiter() on a list of 3 elements :: ");
+	bzero(buff,128);
+	t_list *list = ft_lstnew((void *)"Hello");
+	t_list *iterator = list;
+	iterator->next = ft_lstnew((void *)" ");
+	iterator = iterator->next;
+	iterator->next = ft_lstnew((void *)"World !");
+	iterator = iterator->next;
+	iterator->next = NULL;
+	ft_lstiter(list,func);
+	r = r && (*_count == 3);
+	r = r && (strcmp(buff,"Hello World !") == 0);	
+	printf("\n  o - Expecting \"Hello World !\" got \"%s\" :: ",buff);
+	printf("\n  o - Expecting the function to be called 3 times, it was called %d times :: ",*_count);
+	printf("\nOK ? ");
+	//free allocated memory
+	while(list->next){
+		iterator = list;
+		list = list->next;
+		free(iterator);
+	}
+	free(list);
+	if(r){
+		printf(GREEN " OK !\n" RESET);
+	}else{
+		printf(RED " !!!FAIL!!!\n" RESET);
+	}
+	printf("Testing ft_lstiter() on a NULL list :: ");
+	*_count = 0;
+	bzero(buff,128);
+	ft_lstiter(NULL,func);
+	r = r && (*_count == 0);
+	r = r && (strcmp(buff,"") == 0);
+	printf("\n o - Expecting \"\" got \"%s\" :: ",buff);
+	printf("\n o - Expecting the function to be called 0 times, it was called %d times :: ",*_count);
+	printf("\nOK ? ");
+	if(r){
+		printf(GREEN " OK !\n" RESET);
+	}else{
+		printf(RED " !!!FAIL!!!\n" RESET);
+	}
+	printf("Testing ft_lstiter() on a list of 1 element :: ");
+	*_count = 0;
+	bzero(buff,128);
+	list = ft_lstnew((void *)"Hello");
+	ft_lstiter(list,func);
+	r = r && (*_count == 1);
+	r = r && (strcmp(buff,"Hello") == 0);
+	printf("\n o - Expecting \"Hello\" got \"%s\" :: ",buff);
+	printf("\n o - Expecting the function to be called 1 times, it was called %d times :: ",*_count);
+	printf("\nOK ? ");
+	//free allocated memory
+	free(list);
+	if(r){
+		printf(GREEN " OK !\n" RESET);
+	}else{
+		printf(RED " !!!FAIL!!!\n" RESET);
+	}
+	printf(BOLDBLUE "---------------------\n" RESET);
+	if(r){
+		printf(BOLDGREEN "ft_lstiter seems OK !\n" RESET);
+	}else{
+		printf(BOLDRED "ft_lstiter is not OK !\n" RESET);
+	}
+	printf(BOLDBLUE "---------------------\n" RESET);
+}
+
+
 
 #define TEST_PART_1 0
 #define TEST_PART_2 0
@@ -2313,6 +2406,7 @@ int main()
 		test_lstadd_back();
 		test_ft_lstdelone();
 		test_ft_lstclear();
+		test_ft_lstiter();
 	}
 	
 	printf(BOLDBLUE "\n\n---------------------\n" RESET);
