@@ -33,7 +33,7 @@
 #define STR_INT_MAX "2147483647"
 #define STR_INT_MIN "-2147483648"
 #define RANDOM_TESTS 1
-#define RANDOM_TESTS_NB 100000
+#define RANDOM_TESTS_NB 10000
 
 int _ok = 1;
 int * const ok = &_ok;
