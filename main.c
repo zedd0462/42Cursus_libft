@@ -2431,8 +2431,8 @@ void test_ft_lstmap(){
 	printf(BOLDBLUE "---------------------\n" RESET);
 }
 
-#define TEST_PART_1 0
-#define TEST_PART_2 0
+#define TEST_PART_1 1
+#define TEST_PART_2 1
 #define TEST_BONUS 1
 
 int main()
