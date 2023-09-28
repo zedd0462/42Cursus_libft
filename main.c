@@ -2258,7 +2258,7 @@ void func(void *content){
 	strlcat(buff,(char *)content,128);
 }
 
-	void test_ft_lstiter(){
+void test_ft_lstiter(){
 	int r = 1;
 	*_count = 0;
 	printf(BOLDBLUE "Testing ft_lstiter...\n" RESET);
@@ -2330,7 +2330,106 @@ void func(void *content){
 	printf(BOLDBLUE "---------------------\n" RESET);
 }
 
+void *inc(void *content){
+	*_count = *_count + 1;
+	int *nb = (int *)malloc(sizeof(int));
+	*nb = *(int *)content + 1;
+	return (void *)nb;
+}
 
+void del_int(void *content){
+	*_count = *_count + 1;
+	free(content);
+}
+
+void test_ft_lstmap(){
+	int r = 1;
+	*_count = 0;
+	printf(BOLDBLUE "Testing ft_lstmap...\n" RESET);
+	printf(BOLDBLUE "---------------------\n" RESET);
+	printf("Testing ft_lstmap() on a list of 3 elements :: ");
+	t_list *list = ft_lstnew((void *)malloc(sizeof(int)));
+	*(int *)list->content = 1;
+	t_list *iterator = list;
+	iterator->next = ft_lstnew((void *)malloc(sizeof(int)));
+	*(int *)iterator->next->content = 2;
+	iterator = iterator->next;
+	iterator->next = ft_lstnew((void *)malloc(sizeof(int)));
+	*(int *)iterator->next->content = 3;
+	iterator = iterator->next;
+	iterator->next = NULL;
+	t_list *new_list = ft_lstmap(list,inc,del_int);
+	r = r && (*(int *)new_list->content == 2);
+	r = r && (*(int *)new_list->next->content == 3);
+	r = r && (*(int *)new_list->next->next->content == 4);
+	r = r && (new_list->next->next->next == NULL);
+	printf("\n  o - Expecting \"2 3 4\" got \"%d %d %d\" :: ",*(int *)new_list->content,*(int *)new_list->next->content,*(int *)new_list->next->next->content);
+	printf("\n  o - Expecting the function to be called 3 times, it was called %d times :: ",*_count);
+	printf("\nOK ? ");
+	//free allocated memory
+	while(list->next){
+		iterator = list;
+		list = list->next;
+		free(iterator->content);
+		free(iterator);
+	}
+	free(list->content);
+	free(list);
+	while(new_list->next){
+		iterator = new_list;
+		new_list = new_list->next;
+		free(iterator->content);
+		free(iterator);
+	}
+	free(new_list->content);
+	free(new_list);
+	if(r){
+		printf(GREEN " OK !\n" RESET);
+	}else{
+		printf(RED " !!!FAIL!!!\n" RESET);
+		fail();
+	}
+	printf("Testing ft_lstmap() on a NULL list :: ");
+	*_count = 0;
+	list = NULL;
+	new_list = ft_lstmap(list,inc,del_int);
+	r = r && (new_list == NULL);
+	printf("\n o - Expecting NULL got \"%p\" :: ",new_list);
+	printf("\n o - Expecting the function to be called 0 times, it was called %d times :: ",*_count);
+	printf("\nOK ? ");
+	if(r){
+		printf(GREEN " OK !\n" RESET);
+	}else{
+		printf(RED " !!!FAIL!!!\n" RESET);
+	}
+	printf("Testing ft_lstmap() on a list of 1 element :: ");
+	*_count = 0;
+	list = ft_lstnew((void *)malloc(sizeof(int)));
+	*(int *)list->content = 1;
+	new_list = ft_lstmap(list,inc,del_int);
+	r = r && (*(int *)new_list->content == 2);
+	r = r && (new_list->next == NULL);
+	printf("\n o - Expecting \"2\" got \"%d\" :: ",*(int *)new_list->content);
+	printf("\n o - Expecting the function to be called 1 times, it was called %d times :: ",*_count);
+	printf("\nOK ? ");
+	//free allocated memory
+	free(list->content);
+	free(list);
+	free(new_list->content);
+	free(new_list);
+	if(r){
+		printf(GREEN " OK !\n" RESET);
+	}else{
+		printf(RED " !!!FAIL!!!\n" RESET);
+	}
+	printf(BOLDBLUE "---------------------\n" RESET);
+	if(r){
+		printf(BOLDGREEN "ft_lstmap seems OK !\n" RESET);
+	}else{
+		printf(BOLDRED "ft_lstmap is not OK !\n" RESET);
+	}
+	printf(BOLDBLUE "---------------------\n" RESET);
+}
 
 #define TEST_PART_1 0
 #define TEST_PART_2 0
@@ -2407,6 +2506,7 @@ int main()
 		test_ft_lstdelone();
 		test_ft_lstclear();
 		test_ft_lstiter();
+		test_ft_lstmap();
 	}
 	
 	printf(BOLDBLUE "\n\n---------------------\n" RESET);
