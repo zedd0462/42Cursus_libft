@@ -35,6 +35,10 @@
 #define RANDOM_TESTS 1
 #define RANDOM_TESTS_NB 10000
 
+#define TEST_PART_1 1
+#define TEST_PART_2 1
+#define TEST_BONUS 0
+
 int _ok = 1;
 int * const ok = &_ok;
 
@@ -1835,7 +1839,7 @@ void test_ft_putnbr_fd(){
 }
 
 
-
+#if TEST_BONUS == 1
 void test_ft_lstnew(){
 	printf(BOLDBLUE "Testing ft_lstnew...\n" RESET);
 	printf(BOLDBLUE "---------------------\n" RESET);
@@ -2430,10 +2434,8 @@ void test_ft_lstmap(){
 	}
 	printf(BOLDBLUE "---------------------\n" RESET);
 }
+#endif
 
-#define TEST_PART_1 1
-#define TEST_PART_2 1
-#define TEST_BONUS 1
 
 int main()
 {
@@ -2495,7 +2497,7 @@ int main()
 		test_ft_putendl_fd();
 		test_ft_putnbr_fd();
 	}
-
+	#if TEST_BONUS == 1
 	if(TEST_BONUS){
 		//BONUS
 		test_ft_lstnew();
@@ -2508,6 +2510,7 @@ int main()
 		test_ft_lstiter();
 		test_ft_lstmap();
 	}
+	#endif
 	
 	printf(BOLDBLUE "\n\n---------------------\n" RESET);
 	printf(BOLDBLUE "---------------------\n" RESET);
