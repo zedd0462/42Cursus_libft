@@ -1,3 +1,10 @@
+//change the value of the define to 0 to disable the test
+//the file can compile without the bonus part but part 1 and part 2 are mandatory
+
+#define TEST_PART_1 1
+#define TEST_PART_2 1
+#define TEST_BONUS 1
+
 #include "libft.h"
 
 #define RESET   "\033[0m"
@@ -32,12 +39,10 @@
 
 #define STR_INT_MAX "2147483647"
 #define STR_INT_MIN "-2147483648"
+
+//disable the random tests or change the number of tests if the tests are too slow
 #define RANDOM_TESTS 1
 #define RANDOM_TESTS_NB 10000
-
-#define TEST_PART_1 1
-#define TEST_PART_2 1
-#define TEST_BONUS 0
 
 int _ok = 1;
 int * const ok = &_ok;
@@ -50,6 +55,8 @@ int * const _count = &count;
 
 char buff[128] = "";
 
+
+//handler to make segfaults show in red
 void handler(int nSignum, siginfo_t* si, void* vcontext) {
 	(void)nSignum;
 	(void)vcontext;
@@ -70,6 +77,7 @@ int memequal(const void *s1, const void *s2, size_t n){
 	return memcmp(s1,s2,n) == 0;
 }
 
+//for the random tests
 int random_int() {
     int random_sign = (rand() % 2 == 0) ? 1 : -1;
     int random_positive = rand();
