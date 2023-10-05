@@ -2108,7 +2108,7 @@ void test_ft_lstlast(){
 	printf(BOLDBLUE "---------------------\n" RESET);
 }
 
-void test_lstadd_back(){
+void test_ft_lstadd_back(){
 	printf(BOLDBLUE "Testing lstadd_back...\n" RESET);
 	printf(BOLDBLUE "---------------------\n" RESET);
 	int r = 1;
@@ -2512,7 +2512,7 @@ int main()
 		test_ft_lstadd_front();
 		test_ft_lstsize();
 		test_ft_lstlast();
-		test_lstadd_back();
+		test_ft_lstadd_back();
 		test_ft_lstdelone();
 		test_ft_lstclear();
 		test_ft_lstiter();
